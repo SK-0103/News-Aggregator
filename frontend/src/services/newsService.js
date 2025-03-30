@@ -2,9 +2,9 @@ import axios from 'axios';
 import { NEWS_API_CONFIG } from '../config/apiConfig';
 
 const axiosInstance = axios.create({
-  baseURL: NEWS_API_CONFIG.NEWS_API_BASE_URL,
+  baseURL: NEWS_API_CONFIG.BASE_URL,
   headers: {
-    'X-Api-Key': NEWS_API_CONFIG.NEWS_API_KEY,
+    'X-Api-Key': NEWS_API_CONFIG.API_KEY,
   },
 });
 
@@ -15,7 +15,7 @@ const formatResponse = (response) => {
   // Add bias information based on source ID
   const articlesWithBias = articles.map(article => {
     const sourceId = article.source.id || article.source.name.toLowerCase();
-    let bias = 'unknown';
+    let bias = 'CENTER'; // Default to CENTER if bias can't be determined
     
     // Check which bias category the source belongs to
     Object.entries(NEWS_API_CONFIG.SOURCES).forEach(([biasType, sources]) => {
@@ -41,7 +41,7 @@ const formatResponse = (response) => {
 
 export const getTopHeadlines = async (params = {}) => {
   try {
-    const response = await axiosInstance.get(NEWS_API_CONFIG.ENDPOINTS.TOP_HEADLINES, {
+    const response = await axiosInstance.get('/top-headlines', {
       params: {
         ...NEWS_API_CONFIG.DEFAULTS,
         ...params,
@@ -56,7 +56,7 @@ export const getTopHeadlines = async (params = {}) => {
 
 export const getEverything = async (params = {}) => {
   try {
-    const response = await axiosInstance.get(NEWS_API_CONFIG.ENDPOINTS.EVERYTHING, {
+    const response = await axiosInstance.get('/everything', {
       params: {
         ...NEWS_API_CONFIG.DEFAULTS,
         ...params,
@@ -71,7 +71,7 @@ export const getEverything = async (params = {}) => {
 
 export const getSources = async (params = {}) => {
   try {
-    const response = await axiosInstance.get(NEWS_API_CONFIG.ENDPOINTS.SOURCES, {
+    const response = await axiosInstance.get('/sources', {
       params: {
         ...NEWS_API_CONFIG.DEFAULTS,
         ...params,
@@ -86,10 +86,13 @@ export const getSources = async (params = {}) => {
 
 export const getNewsByCategory = async (category) => {
   try {
-    const response = await axiosInstance.get(NEWS_API_CONFIG.ENDPOINTS.TOP_HEADLINES, {
+    const sources = NEWS_API_CONFIG.CATEGORY_SOURCES[category];
+    const sourceIds = sources.join(',');
+
+    const response = await axiosInstance.get('/top-headlines', {
       params: {
         ...NEWS_API_CONFIG.DEFAULTS,
-        category: category.toLowerCase(),
+        sources: sourceIds,
       },
     });
     return formatResponse(response.data);
@@ -101,7 +104,7 @@ export const getNewsByCategory = async (category) => {
 
 export const getNewsBySource = async (sourceId) => {
   try {
-    const response = await axiosInstance.get(NEWS_API_CONFIG.ENDPOINTS.TOP_HEADLINES, {
+    const response = await axiosInstance.get('/top-headlines', {
       params: {
         ...NEWS_API_CONFIG.DEFAULTS,
         sources: sourceId,
@@ -116,10 +119,12 @@ export const getNewsBySource = async (sourceId) => {
 
 export const searchNews = async (query) => {
   try {
-    const response = await axiosInstance.get(NEWS_API_CONFIG.ENDPOINTS.EVERYTHING, {
+    const response = await axiosInstance.get('/everything', {
       params: {
         ...NEWS_API_CONFIG.DEFAULTS,
         q: query,
+        sortBy: 'publishedAt',
+        language: 'en'
       },
     });
     return formatResponse(response.data);

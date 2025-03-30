@@ -9,7 +9,7 @@ import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import ProfilePage from './pages/ProfilePage';
 import NewsComparisonPage from './pages/NewsComparisonPage';
-import SourcesPage from './pages/SourcesPage';
+import RussiaUkraineWarPage from './pages/RussiaUkraineWarPage';
 import NotFoundPage from './pages/NotFoundPage';
 import PrivateRoute from './components/routing/PrivateRoute';
 import './App.css';
@@ -23,7 +23,7 @@ const App = () => {
           <Route path="/" element={<HomePage />} />
           <Route path="/news" element={<NewsPage />} />
           <Route path="/news/compare/:id" element={<NewsComparisonPage />} />
-          <Route path="/sources" element={<SourcesPage />} />
+          <Route path="/news/russia-ukraine" element={<RussiaUkraineWarPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route 

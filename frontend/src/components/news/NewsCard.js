@@ -1,6 +1,5 @@
 import React from 'react';
 import { Card, Badge } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
 import { FaClock } from 'react-icons/fa';
 
 const NewsCard = ({ article }) => {
@@ -75,14 +74,14 @@ const NewsCard = ({ article }) => {
             </small>
           </div>
           {article?.url && (
-            <Link 
-              to={`/news/${article.url}`} 
+            <a 
+              href={article.url} 
               className="btn btn-outline-primary btn-sm w-100"
               target="_blank"
               rel="noopener noreferrer"
             >
               Read More
-            </Link>
+            </a>
           )}
         </div>
       </Card.Body>

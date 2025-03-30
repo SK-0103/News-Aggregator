@@ -27,10 +27,12 @@ export const listNews = (page = 1, limit = 10) => async (dispatch) => {
   try {
     dispatch({ type: NEWS_LIST_REQUEST });
 
-    const { articles, totalResults } = await getTopHeadlines({
+    const response = await getTopHeadlines({
       page: page,
       pageSize: limit,
     });
+
+    const { articles, totalResults } = response.data;
 
     dispatch({
       type: NEWS_LIST_SUCCESS,
@@ -53,12 +55,12 @@ export const getNewsDetails = (id) => async (dispatch) => {
   try {
     dispatch({ type: NEWS_DETAILS_REQUEST });
 
-    // Get the article details from the API
-    const { articles } = await getTopHeadlines({
+    const response = await getTopHeadlines({
       q: id,
       pageSize: 1,
     });
 
+    const { articles } = response.data;
     const article = articles[0];
 
     dispatch({
@@ -78,9 +80,15 @@ export const getNewsByCategory = (category) => async (dispatch) => {
   try {
     dispatch({ type: NEWS_BY_CATEGORY_REQUEST });
 
-    const { articles, totalResults } = await getTopHeadlines({
-      category: category.toLowerCase(),
+    const sources = NEWS_API_CONFIG.CATEGORY_SOURCES[category];
+    const sourceIds = sources.join(',');
+
+    const response = await getTopHeadlines({
+      sources: sourceIds,
+      pageSize: 20,
     });
+
+    const { articles, totalResults } = response.data;
 
     dispatch({
       type: NEWS_BY_CATEGORY_SUCCESS,
@@ -105,9 +113,12 @@ export const getNewsByBias = (bias) => async (dispatch) => {
     const sources = NEWS_API_CONFIG.SOURCES[bias.toUpperCase()];
     const sourceIds = sources.join(',');
 
-    const { articles, totalResults } = await getTopHeadlines({
+    const response = await getTopHeadlines({
       sources: sourceIds,
+      pageSize: 20,
     });
+
+    const { articles, totalResults } = response.data;
 
     dispatch({
       type: NEWS_BY_BIAS_SUCCESS,
@@ -124,12 +135,41 @@ export const getNewsByBias = (bias) => async (dispatch) => {
   }
 };
 
+// Get news by source
+export const getNewsBySource = (source) => async (dispatch) => {
+  try {
+    dispatch({ type: NEWS_BY_SOURCE_REQUEST });
+
+    const response = await getTopHeadlines({
+      sources: source,
+      pageSize: 20,
+    });
+
+    const { articles, totalResults } = response.data;
+
+    dispatch({
+      type: NEWS_BY_SOURCE_SUCCESS,
+      payload: {
+        data: articles,
+        total: totalResults
+      },
+    });
+  } catch (error) {
+    dispatch({
+      type: NEWS_BY_SOURCE_FAIL,
+      payload: error.message,
+    });
+  }
+};
+
 // Search news
 export const searchNews = (query) => async (dispatch) => {
   try {
     dispatch({ type: NEWS_SEARCH_REQUEST });
 
-    const { articles, totalResults } = await searchNewsAPI(query);
+    const response = await searchNewsAPI(query);
+
+    const { articles, totalResults } = response.data;
 
     dispatch({
       type: NEWS_SEARCH_SUCCESS,

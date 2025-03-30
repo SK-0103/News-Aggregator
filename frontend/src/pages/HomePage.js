@@ -10,6 +10,7 @@ import { FaNewspaper, FaBalanceScale, FaGlobe } from 'react-icons/fa';
 
 const HomePage = () => {
   const dispatch = useDispatch();
+
   const newsList = useSelector((state) => state.newsList);
   const { loading, error, news } = newsList;
 
@@ -21,7 +22,7 @@ const HomePage = () => {
     <>
       <div className="py-5 bg-light rounded-3 mb-4">
         <Container>
-          <h1 className="display-5 fw-bold mb-4">See All Sides of the Story</h1>
+          <h1 className="display-5 fw-bold mb-4">Welcome to NewsSphere</h1>
           <p className="fs-4 mb-4">
             Compare how news stories are reported differently across the political spectrum and from various sources.
             Get the full picture, not just one perspective.

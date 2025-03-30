@@ -37,7 +37,7 @@ const Header = () => {
         <Container>
           <Link to="/" className="navbar-brand d-flex align-items-center">
             <FaNewspaper className="me-2" />
-            News Aggregator
+            NewsSphere
           </Link>
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
@@ -56,7 +56,7 @@ const Header = () => {
             </Form>
             <Nav className="ms-auto">
               <Link to="/news" className="nav-link">News</Link>
-              <Link to="/sources" className="nav-link">Sources</Link>
+              <Link to="/news/russia-ukraine" className="nav-link">Russia-Ukraine War</Link>
               {userInfo ? (
                 <NavDropdown
                   title={<span><FaUser className="me-1" /> {userInfo.name}</span>}
