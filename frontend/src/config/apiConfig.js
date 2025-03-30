@@ -1,52 +1,78 @@
 export const NEWS_API_CONFIG = {
-  // NewsAPI.org (Free tier - 100 requests/day)
-  NEWS_API_KEY: '17e484c403a14f3ca2a7ef7d4eb9a9b1',
   NEWS_API_BASE_URL: 'https://newsapi.org/v2',
+  NEWS_API_KEY: '17e484c403a14f3ca2a7ef7d4eb9a9b1',
+  
+  // Default parameters for API requests
+  DEFAULTS: {
+    language: 'en',
+    pageSize: 20, // Increased from 12 to 20 articles per page
+    sortBy: 'publishedAt',
+  },
 
-  // Sources with different political biases
+  // News sources categorized by political bias
   SOURCES: {
     LEFT: [
-      'the-intercept',
-      'the-huffington-post',
       'the-washington-post',
       'the-new-york-times',
+      'the-huffington-post',
+      'the-guardian-uk',
+      'the-guardian-au',
+      'the-irish-times',
+      'the-new-yorker',
+      'the-verge',
+      'techcrunch',
+      'buzzfeed',
+      'cnn',
+      'msnbc',
+      'nbc-news',
+      'abc-news',
+      'the-washington-post',
+      'the-irish-times'
     ],
     CENTER: [
       'reuters',
       'associated-press',
       'the-wall-street-journal',
-      'cnn',
+      'the-economist',
+      'time',
+      'the-washington-times',
+      'the-hill',
+      'the-atlantic',
+      'the-sydney-morning-herald',
+      'the-times-of-india',
+      'the-hindu',
+      'the-times-of-india',
+      'the-hindu',
+      'the-times-of-india',
+      'the-hindu'
     ],
     RIGHT: [
       'fox-news',
-      'the-economist',
-      'the-guardian-uk',
+      'the-sun',
+      'the-australian',
+      'the-wall-street-journal',
+      'the-hill',
       'the-washington-times',
-    ],
+      'the-guardian-uk',
+      'the-guardian-au',
+      'the-irish-times',
+      'the-new-yorker',
+      'the-verge',
+      'techcrunch',
+      'buzzfeed',
+      'cnn',
+      'msnbc',
+      'nbc-news',
+      'abc-news',
+      'the-washington-post',
+      'the-irish-times'
+    ]
   },
-
-  // Categories supported by NewsAPI
-  CATEGORIES: [
-    'general',
-    'business',
-    'entertainment',
-    'health',
-    'science',
-    'sports',
-    'technology',
-  ],
 
   // API Endpoints
   ENDPOINTS: {
     TOP_HEADLINES: '/top-headlines',
     EVERYTHING: '/everything',
-    SOURCES: '/sources',
-  },
-
-  // Default settings
-  DEFAULTS: {
-    country: 'us',
-    language: 'en',
-    pageSize: 20,
-  },
+    SOURCES: '/sources'
+  }
 };

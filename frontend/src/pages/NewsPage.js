@@ -5,7 +5,7 @@ import { Row, Col, Container, Form, Button, Pagination, Card } from 'react-boots
 import NewsCard from '../components/news/NewsCard';
 import Loader from '../components/layout/Loader';
 import Message from '../components/layout/Message';
-import { listNews, searchNews, getNewsByCategory, getNewsByBias } from '../redux/actions/newsActions';
+import { listNews, searchNews, getNewsByBias } from '../redux/actions/newsActions';
 import { listSources } from '../redux/actions/sourceActions';
 
 const NewsPage = () => {
@@ -13,14 +13,15 @@ const NewsPage = () => {
   const [searchParams] = useSearchParams();
   const searchQuery = searchParams.get('search');
   
-  const [category, setCategory] = useState('all');
-  const [bias, setBias] = useState('all');
-  const [source, setSource] = useState('all');
+  const [bias, setBias] = useState('CENTER');
   const [page, setPage] = useState(1);
-  const [limit] = useState(12);
+  const [limit] = useState(20); // Increased from 12 to 20 articles per page
 
   const newsList = useSelector((state) => state.newsList);
-  const { loading, error, news, pages } = newsList;
+  const { loading: loadingList, error: errorList, news, pages } = newsList;
+
+  const newsByBias = useSelector((state) => state.newsByBias);
+  const { loading: loadingBias, error: errorBias, news: biasNews, total: biasTotal } = newsByBias;
 
   const newsSearch = useSelector((state) => state.newsSearch);
   const { 
@@ -34,74 +35,34 @@ const NewsPage = () => {
 
   useEffect(() => {
     dispatch(listSources());
-  }, [dispatch]);
-
-  const applyFilters = () => {
-    if (searchQuery) {
-      dispatch(searchNews(searchQuery));
-    } else if (category !== 'all') {
-      dispatch(getNewsByCategory(category));
-    } else if (bias !== 'all') {
-      dispatch(getNewsByBias(bias));
-    } else {
-      dispatch(listNews(page, limit));
-    }
-  };
-
-  const categories = [
-    'all',
-    'general', 
-    'business', 
-    'entertainment', 
-    'health', 
-    'science', 
-    'sports', 
-    'technology'
-  ];
+    dispatch(getNewsByBias(bias));
+  }, [dispatch, bias]);
 
   const biases = [
-    'all',
     'LEFT',
     'CENTER',
     'RIGHT'
   ];
 
-  const handleCategoryChange = (e) => {
-    setCategory(e.target.value);
-    setBias('all');
-    setSource('all');
-    setPage(1);
-    applyFilters();
-  };
-
   const handleBiasChange = (e) => {
     setBias(e.target.value);
-    setCategory('all');
-    setSource('all');
     setPage(1);
-    applyFilters();
-  };
-
-  const handleSourceChange = (e) => {
-    setSource(e.target.value);
-    setCategory('all');
-    setBias('all');
-    setPage(1);
-    applyFilters();
   };
 
   const handleResetFilters = () => {
-    setCategory('all');
-    setBias('all');
-    setSource('all');
+    setBias('CENTER');
     setPage(1);
-    dispatch(listNews(page, limit));
+    dispatch(getNewsByBias('CENTER'));
   };
 
   // Articles to display based on current active filter/search
   const articlesToDisplay = searchQuery 
     ? searchResults 
-    : news;
+    : biasNews;
+
+  const totalPages = searchQuery 
+    ? Math.ceil(searchResults.length / limit) 
+    : Math.ceil(biasTotal / limit);
 
   return (
     <Container className="py-4">
@@ -109,40 +70,14 @@ const NewsPage = () => {
         <Col md={3} className="mb-4">
           <Card className="mb-3">
             <Card.Body>
-              <h5 className="mb-3">Filters</h5>
+              <h5 className="mb-3">Political Bias</h5>
               
-              {/* Category Filter */}
-              <Form.Group className="mb-3">
-                <Form.Label>Category</Form.Label>
-                <Form.Select value={category} onChange={handleCategoryChange}>
-                  {categories.map((cat) => (
-                    <option key={cat} value={cat}>
-                      {cat === 'all' ? 'All Categories' : cat.charAt(0).toUpperCase() + cat.slice(1)}
-                    </option>
-                  ))}
-                </Form.Select>
-              </Form.Group>
-
-              {/* Bias Filter */}
-              <Form.Group className="mb-3">
-                <Form.Label>Political Bias</Form.Label>
+              <Form.Group>
+                <Form.Label>Select Bias</Form.Label>
                 <Form.Select value={bias} onChange={handleBiasChange}>
                   {biases.map((b) => (
                     <option key={b} value={b}>
-                      {b === 'all' ? 'All Biases' : b.replace('-', ' ')}
-                    </option>
-                  ))}
-                </Form.Select>
-              </Form.Group>
-
-              {/* Source Filter */}
-              <Form.Group>
-                <Form.Label>News Source</Form.Label>
-                <Form.Select value={source} onChange={handleSourceChange}>
-                  <option value="all">All Sources</option>
-                  {sources?.map((source) => (
-                    <option key={source.id} value={source.id}>
-                      {source.name}
+                      {b.replace('-', ' ')}
                     </option>
                   ))}
                 </Form.Select>
@@ -152,35 +87,23 @@ const NewsPage = () => {
                 <Button 
                   variant="outline-secondary" 
                   onClick={handleResetFilters}
-                  disabled={category === 'all' && bias === 'all' && source === 'all'}
+                  disabled={bias === 'CENTER'}
                 >
-                  Reset Filters
+                  Reset to Center
                 </Button>
               </div>
             </Card.Body>
           </Card>
 
           {/* Active Filters Summary */}
-          {(category !== 'all' || bias !== 'all' || source !== 'all') && (
+          {bias !== 'CENTER' && (
             <Card className="mt-3">
               <Card.Body>
-                <h5 className="mb-3">Active Filters</h5>
+                <h5 className="mb-3">Active Filter</h5>
                 <ul className="list-unstyled">
-                  {category !== 'all' && (
-                    <li className="mb-2">
-                      <span className="text-primary">Category:</span> {category.charAt(0).toUpperCase() + category.slice(1)}
-                    </li>
-                  )}
-                  {bias !== 'all' && (
-                    <li className="mb-2">
-                      <span className="text-primary">Bias:</span> {bias.replace('-', ' ')}
-                    </li>
-                  )}
-                  {source !== 'all' && (
-                    <li className="mb-2">
-                      <span className="text-primary">Source:</span> {sources?.find(s => s.id === source)?.name || source}
-                    </li>
-                  )}
+                  <li className="mb-2">
+                    <span className="text-primary">Bias:</span> {bias.replace('-', ' ')}
+                  </li>
                 </ul>
               </Card.Body>
             </Card>
@@ -205,10 +128,10 @@ const NewsPage = () => {
             </div>
           )}
 
-          {loadingSearch || loading ? (
+          {loadingSearch || loadingList || loadingBias ? (
             <Loader />
-          ) : errorSearch || error ? (
-            <Message variant="danger">{errorSearch || error}</Message>
+          ) : errorSearch || errorList || errorBias ? (
+            <Message variant="danger">{errorSearch || errorList || errorBias}</Message>
           ) : articlesToDisplay.length === 0 ? (
             <Message variant="info">No news articles found</Message>
           ) : (
@@ -221,7 +144,7 @@ const NewsPage = () => {
                 ))}
               </Row>
               
-              {!searchQuery && pages > 1 && (
+              {totalPages > 1 && (
                 <div className="d-flex justify-content-center mt-4">
                   <Pagination>
                     <Pagination.First 
@@ -233,7 +156,7 @@ const NewsPage = () => {
                       onClick={() => setPage((prev) => Math.max(prev - 1, 1))} 
                     />
                     
-                    {[...Array(pages).keys()].map((x) => (
+                    {[...Array(totalPages).keys()].map((x) => (
                       <Pagination.Item
                         key={x + 1}
                         active={x + 1 === page}
@@ -244,12 +167,12 @@ const NewsPage = () => {
                     ))}
                     
                     <Pagination.Next
-                      disabled={page === pages}
-                      onClick={() => setPage((prev) => Math.min(prev + 1, pages))}
+                      disabled={page === totalPages}
+                      onClick={() => setPage((prev) => Math.min(prev + 1, totalPages))}
                     />
                     <Pagination.Last
-                      disabled={page === pages}
-                      onClick={() => setPage(pages)}
+                      disabled={page === totalPages}
+                      onClick={() => setPage(totalPages)}
                     />
                   </Pagination>
                 </div>
