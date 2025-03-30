@@ -1,0 +1,105 @@
+main {
+  min-height: calc(100vh - 160px);
+}
+
+/* Political bias colors */
+.bias-left {
+  background-color: #3b82f6;
+  color: white;
+}
+
+.bias-center-left {
+  background-color: #93c5fd;
+  color: black;
+}
+
+.bias-center {
+  background-color: #f3f4f6;
+  color: black;
+}
+
+.bias-center-right {
+  background-color: #fca5a5;
+  color: black;
+}
+
+.bias-right {
+  background-color: #ef4444;
+  color: white;
+}
+
+.bias-unknown {
+  background-color: #9ca3af;
+  color: white;
+}
+
+/* News card styles */
+.news-card {
+  transition: all 0.2s ease-in-out;
+  height: 100%;
+}
+
+.news-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+.news-card-img {
+  height: 180px;
+  object-fit: cover;
+}
+
+.news-source-logo {
+  width: 24px;
+  height: 24px;
+  margin-right: 8px;
+}
+
+.comparison-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+@media (max-width: 992px) {
+  .comparison-container {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .comparison-container {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Spinner */
+.spinner {
+  width: 40px;
+  height: 40px;
+  margin: 100px auto;
+  background-color: #333;
+  border-radius: 100%;
+  -webkit-animation: pulse 1s infinite ease-in-out;
+  animation: pulse 1s infinite ease-in-out;
+}
+
+@-webkit-keyframes pulse {
+  0% {
+    -webkit-transform: scale(0);
+  }
+  100% {
+    -webkit-transform: scale(1);
+    opacity: 0;
+  }
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(0);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 0;
+  }
+}
